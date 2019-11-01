@@ -1,1 +1,2 @@
-# mapbox-php
+# PHP-библиотека API mapbox
+## В разработке
