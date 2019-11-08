@@ -8,7 +8,7 @@
     "repositories": [
       {
           "type": "vcs",
-          "url": "https://github.com/WladTitow/yandex-market-php-common.git"
+          "url": "https://github.com/WladTitow/yandex-market-php-common"
       }
     ],
     "require": {
@@ -16,7 +16,7 @@
       "ext-curl": "*",
       "ext-json": "*",
       "guzzlehttp/guzzle": ">=6.4",
-      "yandex-market/yandex-market-php-common": "dev-mapbox"
+      "nixsolutions/yandex-php-common": "dev-mapbox"
     },
     "require-dev": {
       "squizlabs/php_codesniffer": "^3.0",
