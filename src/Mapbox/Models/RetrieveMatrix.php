@@ -1,41 +1,55 @@
 <?php
 namespace Mapbox\Models;
-use Yandex\Common\ObjectModel;
+use Yandex\Common\Model;
 /**
  * Class Navigation
  *
  * @package Mapbox\Models
  */
-class RetrieveMatrix extends ObjectModel
+class RetrieveMatrix extends Model
 {
+    protected $code;
+    protected $durations = null;
+    protected $distances = null;
+    protected $sources;
+    protected $destinations;
+    protected $mappingClasses = [
+        'sources' => Waypoints::class,
+        'destinations' => Waypoints::class
+    ];
     /**
-     * @param array|object $navigation
-     *
-     * @return Navigation
+     * @return string
      */
-    public function add($navigation)
+    public function getCode()
     {
-        if (is_array($bid)) {
-            $this->collection[] = new Navigation($bid);
-        } elseif (is_object($bid) && $bid instanceof Navigation) {
-            $this->collection[] = $bid;
-        }
-        return $this;
+        return $this->code;
     }
     /**
-     * Get items
-     *
-     * @return Navigation[]
+     * @return array
      */
-    public function getAll()
+    public function getDurations()
     {
-        return $this->collection;
+        return $this->durations;
     }
     /**
-     * @return Navigation
+     * @return array
      */
-    public function current()
+    public function getDistances()
     {
-        return parent::current();
+        return $this->distances;
     }
+    /**
+     * @return Waypoints
+     */
+    public function getSources()
+    {
+        return $this->sources;
+    }
+    /**
+     * @return Waypoints
+     */
+    public function getDestinations()
+    {
+        return $this->destinations;
+    }    
 }

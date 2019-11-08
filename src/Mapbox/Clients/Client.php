@@ -1,5 +1,4 @@
 <?php
-/* @copyright © ООО Яндекс.Маркет (Yandex.Market LLC), 2018 */
 namespace Mapbox\Clients;
 use GuzzleHttp\Exception\ClientException;
 use Yandex\Common\AbstractServiceClient;
@@ -30,22 +29,54 @@ class Client extends AbstractServiceClient
     /**
      * @param string $token access token
      */
+    /**
+     * @var string
+     */
+    protected $libraryName = 'mapbox-php-library';
+
     public function __construct($clientId = '', $token = '')
     {
         $this->setAccessToken($token);
         $this->setClientId($clientId);
     }
     /**
+     * @param array|null $headers
+     * @return ClientInterface
+     */
+    protected function getClient($headers = null)
+    {
+        if ($this->client === null) {
+            $defaultOptions = [
+                'base_uri' => $this->getServiceUrl(),
+                'headers' => [                    
+                    'Host' => $this->getServiceDomain(),
+                    'User-Agent' => $this->getUserAgent(),
+                    'Accept' => '*/*',
+                ],
+            ];
+            if ($headers && is_array($headers)) {
+                $defaultOptions["headers"] += $headers;
+            }
+            if ($this->getProxy()) {
+                $defaultOptions['proxy'] = $this->getProxy();
+            }
+            if ($this->getDebug()) {
+                $defaultOptions['debug'] = $this->getDebug();
+            }
+            $this->client = new Client($defaultOptions);
+        }
+        return $this->client;
+    }
+    /**
      * Get url to service resource with parameters
      *
      * @param string $resource
      *
-     * @see http://api.yandex.ru/market/partner/doc/dg/concepts/method-call.xml
      * @return string
      */
     public function getServiceUrl($resource = '')
     {
-        return $this->serviceScheme . '://' . $this->serviceDomain . '/' . $this->version . '/' . $resource;
+        return $this->serviceScheme . '://' . $this->serviceDomain . '/' . $this->version . '/' . $resource;        
     }
     /**
      * @return string
@@ -60,38 +91,6 @@ class Client extends AbstractServiceClient
     public function setClientId($clientId)
     {
         $this->clientId = $clientId;
-    }
-    /**
-     * Returns URL-encoded query string
-     *
-     * @note: similar to http_build_query(),
-     * but transform key=>value where key == value to "?key" param.
-     *
-     * @param array|object $queryData
-     * @param string       $prefix
-     * @param string       $argSeparator
-     * @param int          $encType
-     *
-     * @return string $queryString
-     */
-    protected function buildQueryString(
-        array $queryData,
-        $prefix = '',
-        $argSeparator = '&',
-        $encType = PHP_QUERY_RFC3986
-    ) {
-        foreach ($queryData as $key => &$value) {
-            if (!is_scalar($value)) {
-                $value = implode(',', $value);
-            }
-        }
-        $queryString = http_build_query($queryData, $prefix, $argSeparator, $encType);
-        foreach ($queryData as $key => $value) {
-            if ($key === $value) {
-                $queryString = str_replace("{$key}={$value}", $value, $queryString);
-            }
-        }
-        return $queryString;
     }
     /**
      * Sends a request
