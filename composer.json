@@ -4,7 +4,6 @@
     "keywords":["mapbox","sdk","php"],
     "type":"library",
     "license": "MIT",
-    "minimum-stability": "dev",
     "require": {
       "php": ">=5.6",
       "ext-curl": "*",
