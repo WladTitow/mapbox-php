@@ -9,7 +9,7 @@
       "ext-curl": "*",
       "ext-json": "*",
       "guzzlehttp/guzzle": ">=6.4",
-      "wladtitow/mapbox-php-common": "*"
+      "wladtitow/mapbox-php-common": "dev-master"
     },
     "require-dev": {
       "squizlabs/php_codesniffer": "^3.0",
