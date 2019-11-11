@@ -5,6 +5,7 @@ use Yandex\Common\AbstractServiceClient;
 use Yandex\Common\Exception\ForbiddenException;
 use Yandex\Common\Exception\UnauthorizedException;
 use Mapbox\Exception\PartnerRequestException;
+use GuzzleHttp\Client as GuzzleClient;
 
 class Client extends AbstractServiceClient
 {
@@ -63,7 +64,7 @@ class Client extends AbstractServiceClient
             if ($this->getDebug()) {
                 $defaultOptions['debug'] = $this->getDebug();
             }
-            $this->client = new Client($defaultOptions);
+            $this->client = new GuzzleClient($defaultOptions);
         }
         return $this->client;
     }

@@ -47,7 +47,6 @@ class NavigationClient extends Client
     {
         $response = $this->sendRequest('GET', $this->getServiceUrl($resource));
         $decodedResponseBody = $this->getDecodedBody($response->getBody());
-        $getRetrieveMatrixResponse = new GetRetrieveMatrixResponse($decodedResponseBody);
-        return $getRetrieveMatrixResponse->getRetrieveMatrix();
+        return new RetrieveMatrix($decodedResponseBody);
     }
 }

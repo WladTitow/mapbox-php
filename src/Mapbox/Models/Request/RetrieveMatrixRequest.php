@@ -1,5 +1,5 @@
 <?php
-namespace Mapbox\Models\Response;
+namespace Mapbox\Models\Request;
 use Mapbox\Models\RetrieveMatrix;
 use Yandex\Common\Model;
 use Mapbox\Exception\PartnerRequestException;
@@ -80,13 +80,18 @@ class RetrieveMatrixRequest extends Model
      */
     public function buildQueryString($prefix = '', $argSeparator = '&')
     {
-        $encType = PHP_QUERY_RFC3986;
+        /*$encType = PHP_QUERY_RFC3986;
         foreach ($queryData as $key => &$value) {
             if (!is_scalar($value)) {
                 $value = implode(',', $value);
             }
         }
-        $queryString = http_build_query($queryData, $prefix, $argSeparator, $encType);
+        $queryString = http_build_query($queryData, $prefix, $argSeparator, $encType);*/        
+        $coordinatesList = array();
+        foreach ($this->coordinates as $value) {
+            $coordinatesList[] = implode(',', $value);
+        }        
+        $queryString = $this->profile.'/'.implode(';', $coordinatesList);
         return $queryString;
     }
 
