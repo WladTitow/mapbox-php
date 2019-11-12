@@ -27,11 +27,8 @@ class NavigationClient extends Client
      */
     public function getRetrieveMatrix(RetrieveMatrixRequest $request)
     {
-        $separator = '&';
         $resource = $request->buildQueryString();        
-        if($request->optionalEmpty())
-            $separator = '?'; 
-        $resource .= $separator.'access_token='.$this->getAccessToken();
+        $resource .= '&access_token='.$this->getAccessToken();
         return $this->getRetrieveMatrixResponse($resource);
     }
     /**

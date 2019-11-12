@@ -8,19 +8,29 @@ class RetrieveMatrixRequest extends Model
     /**
      * Request constants
      */
+    const ENCTYPE = PHP_QUERY_RFC3986;   
     const DRIVING = 'mapbox/driving';
     const WALKING = 'mapbox/walking';
     const CYCLING = 'mapbox/cycling';
     const TRAFFIC = 'mapbox/driving-traffic';
+
+    const DURATION = 'duration';
+    const DISTANCE = 'distance';
+    const BOTHANNOTATIONS = 'duration,distance';
+
     
     protected $profile = self::DRIVING;
     protected $coordinates;
 
-    protected $annotations;
+    protected $annotations = self::DURATION;
     protected $approaches;
     protected $destinations;
     protected $fallback_speed;
     protected $sources;    
+
+    protected $mappingOptionals = array(
+        'annotations'
+    );
 
     /**
      * @return string
@@ -35,6 +45,13 @@ class RetrieveMatrixRequest extends Model
     public function getCoordinates()
     {
         return $this->coordinates;
+    }
+    /**
+     * @return string
+     */
+    public function getAnnotations()
+    {
+        return $this->annotations;
     }
 
     /**
@@ -58,6 +75,27 @@ class RetrieveMatrixRequest extends Model
         }
         return $this;
     }
+
+    /**
+     * @param string $annotations
+     *
+     * @return RetrieveMatrixRequest
+     */
+    public function setAnnotations($annotations)
+    {
+        switch ($annotations) {
+            case self::DURATION:
+                $this->annotations = self::DURATION;
+            case self::DISTANCE:
+                $this->annotations = self::DISTANCE;
+            case self::BOTHANNOTATIONS:
+                $this->annotations = self::BOTHANNOTATIONS;
+            default:
+                throw new PartnerRequestException('Annotations value not valid');
+        }
+        return $this;
+    }
+
     /**
      * @param double $longitude
      * @param double $latitude
@@ -79,24 +117,22 @@ class RetrieveMatrixRequest extends Model
      * @return string $queryString
      */
     public function buildQueryString($prefix = '', $argSeparator = '&')
-    {
-        /*$encType = PHP_QUERY_RFC3986;
-        foreach ($queryData as $key => &$value) {
-            if (!is_scalar($value)) {
-                $value = implode(',', $value);
-            }
-        }
-        $queryString = http_build_query($queryData, $prefix, $argSeparator, $encType);*/        
+    {           
         $coordinatesList = array();
         foreach ($this->coordinates as $value) {
             $coordinatesList[] = implode(',', $value);
         }        
         $queryString = $this->profile.'/'.implode(';', $coordinatesList);
-        return $queryString;
-    }
 
-    public function optionalEmpty()
-    {
-        return true;
+        $queryData = array();
+        foreach ($this->mappingOptionals as $key => $propertyName) {
+            if (is_scalar($this->{$propertyName})) {
+                $queryData[$propertyName] = $this->{$propertyName};
+            } else {
+                $queryData[$propertyName] = implode(',', $this->{$propertyName});
+            }
+        }
+        $queryString .= '?'.http_build_query($queryData, $prefix, $argSeparator, $self::ENCTYPE);
+        return $queryString;
     }
 }
