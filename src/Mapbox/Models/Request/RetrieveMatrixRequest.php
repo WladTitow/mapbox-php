@@ -1,6 +1,7 @@
 <?php
 namespace Mapbox\Models\Request;
 use Mapbox\Models\RetrieveMatrix;
+use Mapbox\Models\RequestPoint;
 use Yandex\Common\Model;
 use Mapbox\Exception\PartnerRequestException;
 class RetrieveMatrixRequest extends Model
@@ -20,16 +21,13 @@ class RetrieveMatrixRequest extends Model
 
     
     protected $profile = self::DRIVING;
-    protected $coordinates;
+    protected $requestPoints = null;
 
     protected $annotations = self::DURATION;
-    protected $approaches;
-    protected $destinations;
-    protected $fallback_speed;
-    protected $sources;    
+    protected $fallbackSpeed = null;
 
     protected $mappingOptionals = array(
-        'annotations'
+        'annotations', 'fallbackSpeed'
     );
 
     /**
@@ -42,9 +40,9 @@ class RetrieveMatrixRequest extends Model
     /**
      * @return array
      */
-    public function getCoordinates()
+    public function getRequestPoints()
     {
-        return $this->coordinates;
+        return $this->requestPoints;
     }
     /**
      * @return string
@@ -97,14 +95,13 @@ class RetrieveMatrixRequest extends Model
     }
 
     /**
-     * @param double $longitude
-     * @param double $latitude
+     * @param RequestPoint $requestPoint
      *
      * @return RetrieveMatrixRequest
      */
-    public function addCoordinates($longitude, $latitude)
+    public function addRequestPoint($requestPoint)
     {
-        $this->coordinates[] = array($longitude, $latitude);
+        $this->requestPoints[] = $requestPoint;
         return $this;
     }    
 
@@ -117,22 +114,50 @@ class RetrieveMatrixRequest extends Model
      * @return string $queryString
      */
     public function buildQueryString($prefix = '', $argSeparator = '&')
-    {           
+    {   
+        $queryData = null;
         $coordinatesList = array();
-        foreach ($this->coordinates as $value) {
-            $coordinatesList[] = implode(',', $value);
-        }        
+        foreach ($this->requestPoints as $point) {
+            $coordinatesList[] = $point->getLongitude().','.$point->getLatitude();
+        }
         $queryString = $this->profile.'/'.implode(';', $coordinatesList);
+        $approaches = array_filter(
+            $this->requestPoints,
+            function ($e) { return isset($e->approaches);}
+        );
+        if(count($approaches) > 0) {
+            $approaches = array_map(
+                function ($e) { return $e->getApproaches();},
+                $this->requestPoints
+            );
+            $queryData['approaches'] = implode(';', $approaches);
+        }
+        $destinations = array_filter(
+            $this->requestPoints,
+            function ($e) { return isset($e->destinations);}
+        );
+        if(count($destinations) > 0)
+            $queryData['destinations'] = implode(';', array_keys($destinations));
+        
+        $sources = array_filter(
+            $this->requestPoints,
+            function ($e) { return isset($e->sources);}
+        );
+        if(count($sources) > 0)
+            $queryData['sources'] = implode(';', array_keys($sources));
 
-        $queryData = array();
         foreach ($this->mappingOptionals as $key => $propertyName) {
-            if (is_scalar($this->{$propertyName})) {
-                $queryData[$propertyName] = $this->{$propertyName};
-            } else {
-                $queryData[$propertyName] = implode(',', $this->{$propertyName});
+            if(isset($this->{$propertyName})) {
+                if (is_scalar($this->{$propertyName})) {
+                    $queryData[$propertyName] = $this->{$propertyName};
+                } else {
+                    $queryData[$propertyName] = implode(',', $this->{$propertyName});
+                }
             }
         }
-        $queryString .= '?'.http_build_query($queryData, $prefix, $argSeparator, $self::ENCTYPE);
+        $queryString .= '?';
+        if(isset($queryData))
+            $queryString .= http_build_query($queryData, $prefix, $argSeparator, $self::ENCTYPE);
         return $queryString;
     }
 }

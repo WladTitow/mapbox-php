@@ -22,18 +22,16 @@ class Waypoint extends Model
         return $this->location;
     }
     /**
-     * longitude
      * @return double 
      */
-    public function getLocationX()
+    public function getLongitude()
     {
         return $this->location[0];
     }
     /**
-     * latitude
      * @return double
      */
-    public function getLocationY()
+    public function getLatitude()
     {
         return $this->location[1];
     }
