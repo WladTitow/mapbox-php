@@ -1,10 +1,10 @@
 <?php
-namespace Mapbox\Clients;
+namespace Mapbox\Clients\Navigation;
 use Mapbox\Models\Response\GetRetrieveMatrixResponse;
 use Mapbox\Models\Request\RetrieveMatrixRequest;
 use Mapbox\Models\RetrieveMatrix;
 
-class NavigationClient extends Client
+class RetrieveMatrixClient extends Client
 {
     /**
      * API domain
