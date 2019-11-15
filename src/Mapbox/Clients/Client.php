@@ -20,7 +20,7 @@ class Client extends AbstractServiceClient
      *
      * @var string
      */
-    private $version = 'v1';
+    protected $version = 'v1';
     /**
      * Application ID
      *

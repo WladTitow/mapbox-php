@@ -157,7 +157,7 @@ class RetrieveMatrixRequest extends Model
         }
         $queryString .= '?';
         if(isset($queryData))
-            $queryString .= http_build_query($queryData, $prefix, $argSeparator, $self::ENCTYPE);
+            $queryString .= http_build_query($queryData, $prefix, $argSeparator, self::ENCTYPE);
         return $queryString;
     }
 }

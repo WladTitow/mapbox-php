@@ -1,23 +1,31 @@
 <?php
 namespace Mapbox\Clients\Navigation;
 use Mapbox\Models\Response\GetRetrieveMatrixResponse;
-use Mapbox\Models\Request\RetrieveMatrixRequest;
-use Mapbox\Models\RetrieveMatrix;
+use Mapbox\Models\Request\RetrieveDirectionsRequest;
+use Mapbox\Models\RetrieveDirections;
+use Mapbox\Clients\Client;
 
-class RetrieveMatrixClient extends Client
+class RetrieveDirectionsClient extends Client
 {
     /**
      * API domain
      *
      * @var string
      */
-    protected $serviceDomain = 'api.mapbox.com/directions-matrix';
+    protected $serviceDomain = 'api.mapbox.com/directions';
     /**
-     * The Mapbox Matrix API returns travel times between many points.
+     * Requested version of API
      *
-     * @see https://docs.mapbox.com/api/navigation/#matrix
+     * @var string
+     */
+    protected $version = 'v5';
+    /**
+     * Retrieve directions between waypoints. 
+     * Directions requests must specify at least two waypoints as starting and ending points.
      *
-     * @param RetrieveMatrixRequest $request
+     * @see https://docs.mapbox.com/api/navigation/#directions
+     *
+     * @param RetrieveDirectionsRequest $request
      *
      * @return Stats
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -25,25 +33,25 @@ class RetrieveMatrixClient extends Client
      * @throws \Yandex\Common\Exception\UnauthorizedException
      * @throws \Mapbox\Exception\PartnerRequestException
      */
-    public function getRetrieveMatrix(RetrieveMatrixRequest $request)
+    public function getRetrieveDirections(RetrieveDirectionsRequest $request)
     {
         $resource = $request->buildQueryString();        
         $resource .= '&access_token='.$this->getAccessToken();
-        return $this->getRetrieveMatrixResponse($resource);
+        return $this->getRetrieveDirectionsResponse($resource);
     }
     /**
      * @param string $resource
      *
-     * @return RetrieveMatrix
+     * @return RetrieveDirections
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Yandex\Common\Exception\ForbiddenException
      * @throws \Yandex\Common\Exception\UnauthorizedException
      * @throws \Mapbox\Exception\PartnerRequestException
      */
-    private function getRetrieveMatrixResponse($resource)
+    private function getRetrieveDirectionsResponse($resource)
     {
         $response = $this->sendRequest('GET', $this->getServiceUrl($resource));
         $decodedResponseBody = $this->getDecodedBody($response->getBody());
-        return new RetrieveMatrix($decodedResponseBody);
+        return new RetrieveDirections($decodedResponseBody);
     }
 }

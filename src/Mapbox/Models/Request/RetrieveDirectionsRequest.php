@@ -101,7 +101,11 @@ class RetrieveDirectionsRequest extends Model
         foreach ($this->mappingOptionals as $key => $propertyName) {
             if(isset($this->{$propertyName})) {
                 if (is_scalar($this->{$propertyName})) {
-                    $queryData[$propertyName] = $this->{$propertyName};
+                    if($this->{$propertyName} === false or $this->{$propertyName} === true) {
+                        $queryData[$propertyName] = $this->{$propertyName}?'true':'false';
+                    } else {
+                        $queryData[$propertyName] = $this->{$propertyName};
+                    }                    
                 } else {
                     $queryData[$propertyName] = implode(',', $this->{$propertyName});
                 }
@@ -109,7 +113,7 @@ class RetrieveDirectionsRequest extends Model
         }
         $queryString .= '?';
         if(isset($queryData))
-            $queryString .= http_build_query($queryData, $prefix, $argSeparator, $self::ENCTYPE);
+            $queryString .= http_build_query($queryData, $prefix, $argSeparator, self::ENCTYPE);
         return $queryString;
     }
 }
