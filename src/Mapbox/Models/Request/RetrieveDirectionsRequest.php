@@ -16,19 +16,11 @@ class RetrieveDirectionsRequest extends Model
     const TRAFFIC = 'mapbox/driving-traffic';
   
     protected $profile = self::DRIVING;
-
-    protected $alternatives = false;
-    protected $continue_straight = false;
-    //duration, distance, speed, and congestion
-    protected $annotations;
-
-
-    const DURATION = 'duration';
-    const DISTANCE = 'distance';
-    const BOTHANNOTATIONS = 'duration,distance';
     protected $requestPoints = null;
-
-    protected $fallbackSpeed = null;
+    /**
+     * Whether to try to return alternative routes (true) or not (false, default)
+     */
+    protected $alternatives = false;
 
     protected $mappingOptionals = array(
         'alternatives'
@@ -49,11 +41,11 @@ class RetrieveDirectionsRequest extends Model
         return $this->requestPoints;
     }
     /**
-     * @return string
+     * @return bool
      */
-    public function getAnnotations()
+    public function getAlternatives()
     {
-        return $this->annotations;
+        return $this->alternatives;
     }
 
     /**
@@ -74,26 +66,6 @@ class RetrieveDirectionsRequest extends Model
                 $this->profile = self::DRIVING;
             default:
                 throw new PartnerRequestException('Profile value not valid');
-        }
-        return $this;
-    }
-
-    /**
-     * @param string $annotations
-     *
-     * @return RetrieveMatrixRequest
-     */
-    public function setAnnotations($annotations)
-    {
-        switch ($annotations) {
-            case self::DURATION:
-                $this->annotations = self::DURATION;
-            case self::DISTANCE:
-                $this->annotations = self::DISTANCE;
-            case self::BOTHANNOTATIONS:
-                $this->annotations = self::BOTHANNOTATIONS;
-            default:
-                throw new PartnerRequestException('Annotations value not valid');
         }
         return $this;
     }
@@ -125,30 +97,6 @@ class RetrieveDirectionsRequest extends Model
             $coordinatesList[] = $point->getLongitude().','.$point->getLatitude();
         }
         $queryString = $this->profile.'/'.implode(';', $coordinatesList);
-        $approaches = array_filter(
-            $this->requestPoints,
-            function ($e) { return isset($e->approaches);}
-        );
-        if(count($approaches) > 0) {
-            $approaches = array_map(
-                function ($e) { return $e->getApproaches();},
-                $this->requestPoints
-            );
-            $queryData['approaches'] = implode(';', $approaches);
-        }
-        $destinations = array_filter(
-            $this->requestPoints,
-            function ($e) { return isset($e->destinations);}
-        );
-        if(count($destinations) > 0)
-            $queryData['destinations'] = implode(';', array_keys($destinations));
-        
-        $sources = array_filter(
-            $this->requestPoints,
-            function ($e) { return isset($e->sources);}
-        );
-        if(count($sources) > 0)
-            $queryData['sources'] = implode(';', array_keys($sources));
 
         foreach ($this->mappingOptionals as $key => $propertyName) {
             if(isset($this->{$propertyName})) {

@@ -9,13 +9,11 @@ use Yandex\Common\Model;
 class RetrieveDirections extends Model
 {
     protected $code;
-    protected $durations = null;
-    protected $distances = null;
-    protected $sources;
-    protected $destinations;
+    protected $waypoints;
+    protected $routes;
     protected $mappingClasses = [
-        'sources' => Waypoints::class,
-        'destinations' => Waypoints::class
+        'waypoints' => Waypoints::class,
+        'routes' => Routes::class
     ];
     /**
      * @return string

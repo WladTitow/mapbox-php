@@ -3,20 +3,15 @@ namespace Mapbox\Models;
 use Yandex\Common\Model;
 class RequestPoint extends Model
 {
+    const CURB = 'curb';
+
     protected $longitude;
     protected $latitude;
 
-    protected $approaches = null;
-    protected $destinations = null;
-    protected $sources = null;
+    protected $approaches = '';
+    protected $destinations = false;
+    protected $sources = false;
 
-    protected $propNameMap = array(
-        'longitude',
-        'latitude',
-        'approaches',
-        'destinations',
-        'sources'
-    );
     /**
      * @return double 
      */
@@ -30,6 +25,20 @@ class RequestPoint extends Model
     public function getLatitude()
     {
         return $this->latitude;
+    }
+    /**
+     * @return double
+     */
+    public function getDestinations()
+    {
+        return $this->destinations;
+    }
+    /**
+     * @return double
+     */
+    public function getSources()
+    {
+        return $this->sources;
     }
     /**
      * @return string
