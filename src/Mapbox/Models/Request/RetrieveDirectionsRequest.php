@@ -22,8 +22,11 @@ class RetrieveDirectionsRequest extends Model
      */
     protected $alternatives = false;
 
+    protected $language = null;
+    protected $steps = null;
+
     protected $mappingOptionals = array(
-        'alternatives'
+        'alternatives', 'language', 'steps'
     );
 
     /**
@@ -39,6 +42,30 @@ class RetrieveDirectionsRequest extends Model
     public function getRequestPoints()
     {
         return $this->requestPoints;
+    }
+    /**
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+    /**
+     * @return bool
+     */
+    public function getSteps()
+    {
+        return $this->steps;
+    }
+    /**
+     * @param string $language
+     *
+     * @return RetrieveDirectionsRequest
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+        return $this;
     }
     /**
      * @return bool
