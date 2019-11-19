@@ -23,31 +23,17 @@ class RetrieveDirections extends Model
         return $this->code;
     }
     /**
-     * @return array
-     */
-    public function getDurations()
-    {
-        return $this->durations;
-    }
-    /**
-     * @return array
-     */
-    public function getDistances()
-    {
-        return $this->distances;
-    }
-    /**
      * @return Waypoints
      */
-    public function getSources()
+    public function getWaypoints()
     {
-        return $this->sources;
+        return $this->waypoints;
     }
     /**
-     * @return Waypoints
+     * @return Routes
      */
-    public function getDestinations()
+    public function getRoutes()
     {
-        return $this->destinations;
-    }    
+        return $this->routes;
+    } 
 }

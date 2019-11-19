@@ -40,13 +40,19 @@ class Route extends Model
     {
         return $this->duration;
     }
-        /**
+    /**
      * @return double
      */
     public function getDistance()
     {
         return $this->distance;
     }
-
+    /**
+     * @return array
+     */
+    public function getLegs()
+    {
+        return $this->legs;
+    }
 
 }
